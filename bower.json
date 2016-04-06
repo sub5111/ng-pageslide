@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:dpiccone/ng-pageslide.git"
+    "url": "git@github.com:sub5111/ng-pageslide.git"
   },
   "dependencies": {
     "angular": "1.4.6"
