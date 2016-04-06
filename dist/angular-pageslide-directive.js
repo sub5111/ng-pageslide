@@ -83,11 +83,12 @@ angular.module('pageslide-directive', [])
                 /* Style setup */
                 slider.style.zIndex = param.zindex;
                 slider.style.position = param.container !== false ? 'absolute' : 'fixed';
-                slider.style.width = 0;
-                slider.style.height = 0;
+                slider.style.width = param.size;
+                slider.style.overflow = 'hidden';
+                slider.style.height = param.size;
                 slider.style.transitionDuration = param.speed + 's';
                 slider.style.webkitTransitionDuration = param.speed + 's';
-                slider.style.transitionProperty = 'width, height';
+                slider.style.transitionProperty = 'width, height, transform';
 
                 if (param.squeeze) {
                     body.style.position = 'absolute';
@@ -127,10 +128,10 @@ angular.module('pageslide-directive', [])
                 /* Closed */
                 function psClose(slider, param) {
                     if (slider && slider.style.width !== 0) {
-                        content.css('display', 'none');
+
                         switch (param.side) {
                             case 'right':
-                                slider.style.width = '0px';
+                                slider.style.transform = 'translate3d('+ param.size +', 0, 0)';
                                 if (param.squeeze) body.style.right = '0px';
                                 if (param.push) {
                                     body.style.right = '0px';
@@ -138,7 +139,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'left':
-                                slider.style.width = '0px';
+                                slider.style.transform = 'translate3d(-'+ param.size +', 0, 0)';
                                 if (param.squeeze) body.style.left = '0px';
                                 if (param.push) {
                                     body.style.left = '0px';
@@ -146,7 +147,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'top':
-                                slider.style.height = '0px';
+                                slider.style.transform = 'translate3d(0, -'+param.size+', 0)';
                                 if (param.squeeze) body.style.top = '0px';
                                 if (param.push) {
                                     body.style.top = '0px';
@@ -154,7 +155,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'bottom':
-                                slider.style.height = '0px';
+                                slider.style.transform = 'translate3d(0, '+param.size+', 0)';
                                 if (param.squeeze) body.style.bottom = '0px';
                                 if (param.push) {
                                     body.style.bottom = '0px';
@@ -177,7 +178,7 @@ angular.module('pageslide-directive', [])
                     if (slider.style.width !== 0) {
                         switch (param.side) {
                             case 'right':
-                                slider.style.width = param.size;
+                                slider.style.transform = 'translate3d(0, 0, 0)';
                                 if (param.squeeze) body.style.right = param.size;
                                 if (param.push) {
                                     body.style.right = param.size;
@@ -185,7 +186,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'left':
-                                slider.style.width = param.size;
+                                slider.style.transform = 'translate3d(0, 0, 0)';
                                 if (param.squeeze) body.style.left = param.size;
                                 if (param.push) {
                                     body.style.left = param.size;
@@ -193,7 +194,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'top':
-                                slider.style.height = param.size;
+                                slider.style.transform = 'translate3d(0, 0, 0)';
                                 if (param.squeeze) body.style.top = param.size;
                                 if (param.push) {
                                     body.style.top = param.size;
@@ -201,7 +202,7 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                             case 'bottom':
-                                slider.style.height = param.size;
+                                slider.style.transform = 'translate3d(0, 0, 0)';
                                 if (param.squeeze) body.style.bottom = param.size;
                                 if (param.push) {
                                     body.style.bottom = param.size;
@@ -209,10 +210,6 @@ angular.module('pageslide-directive', [])
                                 }
                                 break;
                         }
-
-                        $timeout(function() {
-                            content.css('display', 'block');
-                        }, (param.speed * 1000));
 
                         $scope.psOpen = true;
 
