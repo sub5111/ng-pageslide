@@ -20,7 +20,8 @@ angular.module('pageslide-directive', [])
                 psPush: '@',
                 psContainer: '@',
                 psKeyListener: '@',
-                psBodyClass: '@'
+                psBodyClass: '@',
+                psStaticBackdrop: '@'
             },
             link: function ($scope, el, attrs) {
 
@@ -42,6 +43,7 @@ angular.module('pageslide-directive', [])
                 param.container = $scope.psContainer || false;
                 param.keyListener = Boolean($scope.psKeyListener) || false;
                 param.bodyClass = $scope.psBodyClass || false;
+                param.staticBackdrop = $scope.psStaticBackdrop || false;
 
                 el.addClass(param.className);
 
@@ -128,7 +130,9 @@ angular.module('pageslide-directive', [])
                 /* Closed */
                 function psClose(slider, param) {
                     if (slider && slider.style.width !== 0) {
-
+                        if ($scope.psStaticBackdrop) {
+                            document.getElementsByTagName( 'html' )[0].style.overflow = 'auto';
+                        }
                         switch (param.side) {
                             case 'right':
                                 slider.style.transform = 'translate3d('+ param.size +', 0, 0)';
@@ -175,6 +179,9 @@ angular.module('pageslide-directive', [])
 
                 /* Open */
                 function psOpen(slider, param) {
+                    if ($scope.psStaticBackdrop) {
+                            document.getElementsByTagName( 'html' )[0].style.overflow = 'hidden';
+                        }
                     if (slider.style.width !== 0) {
                         switch (param.side) {
                             case 'right':
