@@ -153,7 +153,7 @@ angular.module('pageslide-directive', [])
                 function psClose(slider, param) {
                     if (slider && slider.style.width !== 0) {
                         if ($scope.psStaticBackdrop) {
-                            document.getElementsByTagName( 'html' )[0].style.overflow = 'auto';
+                            document.getElementsByTagName( 'html' )[0].style.overflow = '';
                         }
                         if (param.backdropClass) {
                             hideBackdrop();
