@@ -21,7 +21,8 @@ angular.module('pageslide-directive', [])
                 psContainer: '@',
                 psKeyListener: '@',
                 psBodyClass: '@',
-                psStaticBackdrop: '@'
+                psStaticBackdrop: '@',
+                psBackdropClass: '@'
             },
             link: function ($scope, el, attrs) {
 
@@ -44,27 +45,15 @@ angular.module('pageslide-directive', [])
                 param.keyListener = Boolean($scope.psKeyListener) || false;
                 param.bodyClass = $scope.psBodyClass || false;
                 param.staticBackdrop = $scope.psStaticBackdrop || false;
+                param.backdropClass = $scope.psBackdropClass || '';
 
                 el.addClass(param.className);
 
                 /* DOM manipulation */
 
-                var content = null;
+                var backDropDiv = null;
                 var slider = null;
                 var body = param.container ? document.getElementById(param.container) : document.body;
-
-                // TODO verify that we are meaning to use the param.className and not the param.bodyClass
-
-                function setBodyClass(value){
-                    if (param.bodyClass) {
-                        var bodyClass = param.className + '-body';
-                        var bodyClassRe = new RegExp(' ' + bodyClass + '-closed| ' + bodyClass + '-open');
-                        body.className = body.className.replace(bodyClassRe, '');
-                        body.className += ' ' + bodyClass + '-' + value;
-                    }
-                }
-
-                setBodyClass('closed');
 
                 slider = el[0];
 
@@ -72,12 +61,6 @@ angular.module('pageslide-directive', [])
                 if (slider.tagName.toLowerCase() !== 'div' &&
                     slider.tagName.toLowerCase() !== 'pageslide')
                     throw new Error('Pageslide can only be applied to <div> or <pageslide> elements');
-
-                // Check for content
-                if (slider.children.length === 0)
-                    throw new Error('You have to content inside the <pageslide>');
-
-                content = angular.element(slider.children);
 
                 /* Append */
                 body.appendChild(slider);
@@ -126,12 +109,54 @@ angular.module('pageslide-directive', [])
                         break;
                 }
 
+                /* Init backdrop */
+                function addBackdrop() {
+                    if (param.backdropClass) {
+                        backDropDiv = document.createElement('div');
+                        backDropDiv.className = param.backdropClass;
+                        backDropDiv.onclick = function () {
+                            //psClose(slider, param);
+                            $scope.$apply($scope.psOpen = false);
+
+                        };
+                        body.appendChild(backDropDiv);
+                    }
+                }
+
+                addBackdrop();
+
+                /* Init body class with state indicator */
+                function setBodyClass(value) {
+                    if (param.bodyClass) {
+                        var bodyClass = 'pageslide';
+                        var bodyClassRe = new RegExp(' ' + bodyClass + '-closed| ' + bodyClass + '-open');
+                        body.className = body.className.replace(bodyClassRe, '');
+                        body.className += ' ' + bodyClass + '-' + value;
+                    }
+                }
+
+                setBodyClass('closed');
+
+
+                /* Show backdrop */
+                function showBackdrop() {
+                    backDropDiv.style.display = 'block';
+                }
+
+                /* Hide backdrop */
+                function hideBackdrop() {
+                    backDropDiv.style.display = 'none';
+                }
+
 
                 /* Closed */
                 function psClose(slider, param) {
                     if (slider && slider.style.width !== 0) {
                         if ($scope.psStaticBackdrop) {
                             document.getElementsByTagName( 'html' )[0].style.overflow = 'auto';
+                        }
+                        if (param.backdropClass) {
+                            hideBackdrop();
                         }
                         switch (param.side) {
                             case 'right':
@@ -182,6 +207,9 @@ angular.module('pageslide-directive', [])
                     if ($scope.psStaticBackdrop) {
                             document.getElementsByTagName( 'html' )[0].style.overflow = 'hidden';
                         }
+                    if (param.backdropClass) {
+                            showBackdrop();
+                    }
                     if (slider.style.width !== 0) {
                         switch (param.side) {
                             case 'right':
